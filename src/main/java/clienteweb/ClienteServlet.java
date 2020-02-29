@@ -27,5 +27,9 @@ public class ClienteServlet extends HttpServlet {
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.getWriter().print("Chamou pelo método DELETE");
 	}
-
+	
+	@Override
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		resp.getWriter().print("Chamou pelo método PUT");
+	}
 }
