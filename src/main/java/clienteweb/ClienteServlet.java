@@ -61,8 +61,11 @@ public class ClienteServlet extends HttpServlet {
 		// adicionando cliente na lista de clientes
 		lista.add(cli);
 
-		resp.setCharacterEncoding("UTF-8");
-		resp.getWriter().print("Chamou pelo método POST enviando e-mail: " + email + "!");
+		System.out.println("Chamou pelo método POST enviando e-mail: " + email + "!");
+		
+		//Chama o método get novamente para exibir a página de formulário
+		doGet(req, resp); //ou resp.sendRedirect("cliente");
+		
 	}
 
 	@Override
