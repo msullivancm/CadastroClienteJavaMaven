@@ -1,8 +1,6 @@
 package clienteweb;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -12,11 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.tibrasil.model.Cliente;
+import net.tibrasil.service.ClienteService;
 
 @WebServlet(urlPatterns = { "/cliente", "/clienteControler", "/clienteServlet" })
 public class ClienteServlet extends HttpServlet {
+	ClienteService clienteService;
 
-	List<Cliente> lista = new ArrayList<>();
 	private RequestDispatcher dispatcher;
 
 	public ClienteServlet() {
@@ -25,6 +24,7 @@ public class ClienteServlet extends HttpServlet {
 
 	@Override
 	public void init() throws ServletException {
+		clienteService = new ClienteService();
 		System.out.println("Inicializando Servlet");
 		super.init();
 	}
@@ -38,13 +38,18 @@ public class ClienteServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		//Cria o dispatcher para redirecionar a requisição para a pagina jsp
+		String i = req.getParameter("i");
+		if (i!=null && i!="") {
+			clienteService.excluir(Integer.parseInt(i));
+		}
+		
+		// Cria o dispatcher para redirecionar a requisição para a pagina jsp
 		dispatcher = req.getRequestDispatcher("cliente.jsp");
-		req.setAttribute("lista", lista);
+		req.setAttribute("lista", clienteService.getTodosClientes());
 		dispatcher.forward(req, resp);
 
 		System.out.println("Chamou pelo metodo GET");
-		
+
 	}
 
 	@Override
@@ -59,13 +64,18 @@ public class ClienteServlet extends HttpServlet {
 		cli.setEmail(email);
 
 		// adicionando cliente na lista de clientes
-		lista.add(cli);
+		clienteService.cadastrar(cli);
 
 		System.out.println("Chamou pelo método POST enviando e-mail: " + email + "!");
-		
-		//Chama o método get novamente para exibir a página de formulário
-		doGet(req, resp); //ou resp.sendRedirect("cliente");
-		
+
+		// Chama o método get novamente para exibir a página de formulário
+		// Cria o dispatcher para redirecionar a requisição para a pagina jsp com um
+		// parâmetro a mais
+		dispatcher = req.getRequestDispatcher("cliente.jsp");
+		req.setAttribute("lista", clienteService.getTodosClientes());
+		req.setAttribute("msg", "Atualizado com sucesso!");
+		dispatcher.forward(req, resp);
+
 	}
 
 	@Override
